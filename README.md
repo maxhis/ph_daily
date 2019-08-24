@@ -1,6 +1,6 @@
 # Telegram bot for Product Hunt Daily
 
-Forward top(vote > 100) Product Hunt posts to Telegram channel.
+Forwarding top(vote > 100) Product Hunt posts to Telegram channel.
 
 ## Prerequisites
 

@@ -61,8 +61,8 @@ def send_to_telegram(title, description, link, votes, topic):
         text = '''
 *{}*\t[👉🔗👈]({})
 {}
-_{}_
-        '''.format(title, link, description, topic)
+#{}
+        '''.format(title, link, description, re.sub('[\s+]', '', topic))
         bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
         mc.set(key, True)
 
