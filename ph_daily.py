@@ -37,7 +37,7 @@ def download_page(url):
 
 
 def get_posts(html):
-    soup = BeautifulSoup(html, 'lxml')
+    soup = BeautifulSoup(html, 'lxml', from_encoding='utf-8')
     # 每个ul是一天的数据，默认只有当天的
     today = soup.find(name='ul', class_=re.compile('^postsList'))
     for item in today.children:
