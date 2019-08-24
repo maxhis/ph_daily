@@ -1,0 +1,7 @@
+requests
+beautifulsoup4
+lxml
+python-telegram-bot
+python-dotenv
+python-binary-memcached
+schedule
