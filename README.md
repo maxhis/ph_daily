@@ -45,5 +45,5 @@ python ph_daily.py
 For a production environment, [pm2](http://pm2.keymetrics.io/) is recommended:
 
 ```
-pm2 start ph_daily.py
+pm2 start ph_daily.py --interpreter ./ENV/bin/python --watch
 ```
