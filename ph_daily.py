@@ -37,7 +37,7 @@ def download_page(url):
 
 
 def get_posts(html):
-    soup = BeautifulSoup(html, 'lxml', from_encoding='utf-8')
+    soup = BeautifulSoup(html, 'lxml')
     # 每个ul是一天的数据，默认只有当天的
     today = soup.find(name='ul', class_=re.compile('^postsList'))
     for item in today.children:
@@ -48,8 +48,8 @@ def get_posts(html):
             title = item.find('h3').get_text()
             description = item.find('p').get_text()
             topic = topic_tag.find('span').get_text()
-            print('title: {} desc: {} lnik: {} votes:{} topic:{}\n'.format(
-                title, description, link, votes, topic))
+            # print('title: {} desc: {} lnik: {} votes:{} topic:{}'.format(
+            #     title, description, link, votes, topic))
             send_to_telegram(title, description, link, votes, topic)
 
 
@@ -63,6 +63,7 @@ def send_to_telegram(title, description, link, votes, topic):
 {}
 #{}
         '''.format(title, link, description, re.sub('[\s+]', '', topic))
+        print('Posting {}'.format(title))
         bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
         mc.set(key, True)
 
@@ -73,7 +74,7 @@ def main():
 
 
 if __name__ == "__main__":
-    schedule.every(10).minutes.do(main)
+    schedule.every(10).seconds.do(main)
 
     while True:
         schedule.run_pending()
