@@ -57,14 +57,14 @@ def get_posts(html):
 def send_to_telegram(title, description, link, votes, topic):
     key = link.split('/')[-1]
     if mc.get(key):
-        print('{} already posted, ignore!'.format(title))
+        print('🔥 "{}" already posted, ignore!'.format(title))
     else:
         text = '''
 *{}*\t[👉🔗👈]({})
 {}
 #{}
         '''.format(title, link, description, re.sub('[\s+]', '', topic))
-        print('Posting {}'.format(title))
+        print('🚀 Posting "{}"'.format(title))
         bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
         mc.set(key, True)
 
