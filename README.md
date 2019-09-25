@@ -47,3 +47,9 @@ For a production environment, [pm2](http://pm2.keymetrics.io/) is recommended:
 ```
 pm2 start ph_daily.py --interpreter ./ENV/bin/python --watch
 ```
+
+or, with pm2 ecosystem file:
+
+```
+pm2 start ecosystem.config.js
+```
