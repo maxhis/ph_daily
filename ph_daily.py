@@ -49,7 +49,7 @@ def get_posts(html):
             title = item.find('h3').get_text()
             description = item.find('p').get_text()
             topic = topic_tag.find('span').get_text()
-            # print('title: {} desc: {} lnik: {} votes:{} topic:{}'.format(
+            # print(u'title: {} desc: {} lnik: {} votes:{} topic:{}'.format(
             #     title, description, link, votes, topic))
             send_to_telegram(title, description, link, votes, topic)
 
@@ -57,14 +57,14 @@ def get_posts(html):
 def send_to_telegram(title, description, link, votes, topic):
     key = link.split('/')[-1]
     if mc.get(key):
-        print('"{}" already posted, ignore!'.format(title))
+        print(u'"{}" already posted, ignore!'.format(title))
     else:
-        text = '''
+        text = u'''
 *{}*\t[👉🔗👈]({})
 {}
 #{}
         '''.format(title, link, description, re.sub('[\s+]', '', topic))
-        print('Posting "{}"'.format(title))
+        print(u'Posting "{}"'.format(title))
         bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
         mc.set(key, True)
 
