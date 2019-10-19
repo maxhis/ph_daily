@@ -53,3 +53,10 @@ or, with pm2 ecosystem file:
 ```
 pm2 start ecosystem.config.js
 ```
+
+## Run with Docker
+
+```
+docker pull maxhis/ph_daily:1.0.0
+docker run --rm --env-file ./.env -t maxhis/ph_daily:1.0.0
+```
