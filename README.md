@@ -13,11 +13,11 @@ All configs and credentials are read from environment variables via dotenv. That
 Here is an exmample:
 
 ```
-BOT_TOKEN='your_telegram_bot_token'
-CHAT_ID='@your_channel_id'
-MEMCACHIER_SERVERS='your_memcachier_service'
-MEMCACHIER_USERNAME='your_memcachier_username'
-MEMCACHIER_PASSWORD='your_memcachier_password'
+BOT_TOKEN=your_telegram_bot_token
+CHAT_ID=@your_channel_id
+MEMCACHIER_SERVERS=your_memcachier_service
+MEMCACHIER_USERNAME=your_memcachier_username
+MEMCACHIER_PASSWORD=your_memcachier_password
 ```
 
 ## Install
