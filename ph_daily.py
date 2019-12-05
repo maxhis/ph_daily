@@ -1,17 +1,15 @@
 # coding=utf-8
 import requests
-from bs4 import BeautifulSoup
+import json
 import re
-import urllib.parse
+import schedule
+import time
 import telegram
 import bmemcached
 import os
-import schedule
-import time
 from dotenv import load_dotenv
 load_dotenv()
 
-BASE_URL = 'https://www.producthunt.com'
 MIN_VOTE = 100
 
 # telegram bot
@@ -27,57 +25,35 @@ mc = bmemcached.Client(servers, username=user, password=passw)
 mc.enable_retry_delay(True)  # Enabled by default. Sets retry delay to 5s.
 
 
-def download_page(url):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36",
-        "Cache-Control": "no-cache",
-    }
-    r = requests.get(url, headers=headers)
-    r.encoding = 'utf-8'
-    return r.text
+def fetch_posts():
+    url = 'https://ph-graph-api-explorer.herokuapp.com/graphql'
+    data = {'query':'{\n  posts(first: 5) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        votesCount\n    \t\ttopics {\n    \t\t  edges {\n    \t\t    node {\n              name\n    \t\t    }\n    \t\t  }\n    \t\t}\n      }\n    }\n  }\n}\n'}
+    r = requests.post(url, json = data)
+    result = r.json()
+    # print(result)
 
+    for item in result['data']['posts']['edges']:
+        node = item['node']
+        if node['votesCount'] > MIN_VOTE:
+            topics = list(map(lambda x: re.sub('[\s+]', '', x['node']['name']), node['topics']['edges']))
+            topicStr = ' #'.join(topics)
+            send_to_telegram(node['id'], node['name'], node['description'], node['url'], topicStr)
 
-def get_posts(html):
-    soup = BeautifulSoup(html, 'lxml')
-    # 每个ul是一天的数据，默认只有当天的
-    today = soup.find(name='ul', class_=re.compile('^postsList'))
-    for item in today.children:
-        votes = item.select_one('button > span > span').get_text()
-        topic_tag = item.find(name='a', class_=re.compile('^postTopicLink'))
-        if topic_tag is not None and int(votes) >= MIN_VOTE:
-            link = urllib.parse.urljoin(BASE_URL, item.find('a').get('href'))
-            title = item.find('h3').get_text()
-            description = item.find('p').get_text()
-            topic = topic_tag.find('span').get_text()
-            # print(u'title: {} desc: {} lnik: {} votes:{} topic:{}'.format(
-            #     title, description, link, votes, topic))
-            send_to_telegram(title, description, link, votes, topic)
-
-
-def send_to_telegram(title, description, link, votes, topic):
-    key = link.split('/')[-1]
-    if mc.get(key):
+def send_to_telegram(id, title, description, link, topics):
+    if mc.get(id):
         print(u'"{}" already posted, ignore!'.format(title))
     else:
         text = u'''
 *{}*\t[👉🔗👈]({})
 {}
 #{}
-        '''.format(title, link, description, re.sub('[\s+]', '', topic))
-        print(u'Posting "{}"'.format(title))
-        bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
-        mc.set(key, True)
-
+    '''.format(title, link, description, topics)
+    print(u'Posting "{}"'.format(title))
+    bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
+    mc.set(id, True)
 
 def main():
-    html = download_page(BASE_URL)
-    get_posts(html)
-
+    fetch_posts()
 
 if __name__ == "__main__":
     main()
-    schedule.every(10).minutes.do(main)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
