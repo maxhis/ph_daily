@@ -30,6 +30,9 @@ def fetch_posts():
     data = {'query':'{\n  posts(first: 5) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        votesCount\n    \t\ttopics {\n    \t\t  edges {\n    \t\t    node {\n              name\n    \t\t    }\n    \t\t  }\n    \t\t}\n      }\n    }\n  }\n}\n'}
     r = requests.post(url, json = data)
     result = r.json()
+    if result is None:
+        print('Something goes wrong when fetch posts!')
+        return
     # print(result)
 
     for item in result['data']['posts']['edges']:
