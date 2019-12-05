@@ -47,10 +47,10 @@ def send_to_telegram(id, title, description, link, topics):
 *{}*\t[👉🔗👈]({})
 {}
 #{}
-    '''.format(title, link, description, topics)
-    print(u'Posting "{}"'.format(title))
-    bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
-    mc.set(id, True)
+        '''.format(title, link, description, topics)
+        print(u'Posting "{}"'.format(title))
+        bot.send_message(chat_id=chat_id, text=text, parse_mode='Markdown')
+        mc.set(id, True)
 
 def main():
     fetch_posts()
