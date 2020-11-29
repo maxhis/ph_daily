@@ -31,19 +31,19 @@ def fetch_posts():
     url = 'https://api.producthunt.com/v2/api/graphql'
     headers = {'Authorization': 'Bearer {}'.format(developer_token)}
     data = {'query':'{\n  posts(first: 5) {\n    edges {\n      node {\n        id\n        name\n        description\n        url\n        votesCount\n    \t\ttopics {\n    \t\t  edges {\n    \t\t    node {\n              name\n    \t\t    }\n    \t\t  }\n    \t\t}\n      }\n    }\n  }\n}\n'}
-    r = requests.post(url, json = data, headers=headers)
-    result = r.json()
-    if result is None:
-        print('Something goes wrong when fetch posts!')
-        return
-    # print(result)
-
-    for item in result['data']['posts']['edges']:
-        node = item['node']
-        if node['votesCount'] > MIN_VOTE:
-            topics = list(map(lambda x: re.sub('[\s+]', '', x['node']['name']), node['topics']['edges']))
-            topicStr = ' #'.join(topics)
-            send_to_telegram(node['id'], node['name'], node['description'], node['url'], topicStr)
+    try:
+        r = requests.post(url, json = data, headers=headers)
+        result = r.json()
+        if result is not None:
+            print(result)
+            for item in result['data']['posts']['edges']:
+                node = item['node']
+                if node['votesCount'] > MIN_VOTE:
+                    topics = list(map(lambda x: re.sub('[\s+]', '', x['node']['name']), node['topics']['edges']))
+                    topicStr = ' #'.join(topics)
+                    send_to_telegram(node['id'], node['name'], node['description'], node['url'], topicStr)
+    except:
+        print('Someting went wrong while fetching posts!')
 
 def send_to_telegram(id, title, description, link, topics):
     if mc.get(id):

@@ -57,6 +57,6 @@ pm2 start ecosystem.config.js
 ## Run with Docker
 
 ```
-docker pull maxhis/ph_daily:1.0.1
-docker run --rm --env-file ./.env -t maxhis/ph_daily:1.0.1
+docker pull maxhis/ph_daily:1.0.2
+docker run --rm --env-file ./.env -t maxhis/ph_daily:1.0.2
 ```
